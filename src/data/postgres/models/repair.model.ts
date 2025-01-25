@@ -16,6 +16,16 @@ export class Repared extends BaseEntity {
 	})
 	date: Date;
 
+	@Column('varchar', {
+		nullable: false,
+	})
+	serialn: string;
+
+	@Column('text', {
+		nullable: false,
+	})
+	description: string;
+
 	@Column('enum', {
 		enum: RepairStatus,
 		default: RepairStatus.PENDING,

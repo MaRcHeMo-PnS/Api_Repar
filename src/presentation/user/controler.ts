@@ -3,6 +3,7 @@ import { CustomError } from '../../domain';
 import { UserService } from '../services/user.services';
 import { CreateUserDTO } from '../../domain/dtos/users/create-user.dto';
 import { UpdateUserDTO } from '../../domain/dtos/users/update.user.dto';
+import { LoginUserDto } from '../../domain/dtos/users/login_user.dto';
 
 export class UserController {
 	constructor(private readonly userService: UserService) {}
@@ -14,6 +15,17 @@ export class UserController {
 
 		console.log(error);
 		return res.status(500).json({ message: 'Something went very wrong! 🧨' });
+	};
+
+	login = (req: Request, res: Response) => {
+		const [error, loginUserDto] = LoginUserDto.create(req.body);
+
+		if (error) return res.status(422).json({ message: error });
+
+		this.userService
+			.login(loginUserDto!)
+			.then((data) => res.status(200).json(data))
+			.catch((error) => this.handleError(error, res));
 	};
 
 	fineAllUser = (req: Request, res: Response) => {
