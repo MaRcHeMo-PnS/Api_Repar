@@ -1,10 +1,26 @@
 import z from 'zod';
 
 const createRepairSchema = z.object({
-	date: z.string().date(),
-	userId: z.string().min(5),
-	serialn: z.string().uuid(),
-	description: z.string().min(10, { message: 'long is ' }),
+	date: z
+		.string({ message: 'date is required' })
+		.regex(/^\d{2}-\d{2}-\d{4}$/, {
+			message: 'Date must be in formt MM_DD_YYY',
+		})
+		.refine(
+			(date) => {
+				const [month, day, year] = date.split('-').map(Number);
+				const parsedDate = new Date(year, month - 1, day);
+				return (
+					parsedDate.getMonth() === month - 1 &&
+					parsedDate.getDate() === day &&
+					parsedDate.getFullYear() === year
+				);
+			},
+			{ message: 'invalid date' },
+		),
+	userId: z.string().uuid({ message: 'userId es required' }),
+	serialn: z.string().min(5, { message: 'serial numero required' }),
+	description: z.string().min(10, { message: 'description de moto please ' }),
 });
 
 export class CreateRepairDto {
@@ -27,6 +43,7 @@ export class CreateRepairDto {
 				acc[field] = err.message;
 				return acc;
 			}, {} as Record<string, string>);
+
 			return [errorMessages];
 		}
 		// if (!date) return ['date is requiered'];

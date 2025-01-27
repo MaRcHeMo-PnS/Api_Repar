@@ -33,12 +33,13 @@ export class RepairController {
 	createRepair = (req: Request, res: Response) => {
 		const [error, createRepairDto] = CreateRepairDto.create(req.body);
 
-		if (error) return res.status(422).json({ message: error });
+		if (error) return res.status(422).json({ errors: error });
 
 		this.repairServices
 			.create(createRepairDto!)
 			.then((data) => res.status(200).json(data))
 			.catch((error: any) => this.handleError(error, res));
+		// console.log(error);
 	};
 
 	updateRepair = (req: Request, res: Response) => {
